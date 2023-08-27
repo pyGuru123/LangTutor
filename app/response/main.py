@@ -16,9 +16,13 @@ async def main(request: dict):
     reply_id = content["message"]["message_id"];
     logger.info(f"{text=}")
 
-    response = await ask_gpt(text)
-    logger.info(f"{response=}")
-    if response:
-        audio = await generate_audio(response)
+    if text.strip() == "/start":
+        audio = await generate_audio("Hello. From now on ill be your english teacher.")
         await send_bot_audio(chat_id, reply_id, audio)
+    else:
+        response = await ask_gpt(text)
+        logger.info(f"{response=}")
+        if response:
+            audio = await generate_audio(response)
+            await send_bot_audio(chat_id, reply_id, audio)
         

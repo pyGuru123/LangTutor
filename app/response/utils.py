@@ -26,7 +26,7 @@ async def send_bot_audio(chat_id, reply_id, audio):
 
 async def ask_gpt(prompt: str):
     payload = json.dumps({
-      "prompt": "reply to this prompt as my english teacher \n" + prompt
+      "prompt": "reply to this prompt as my english teacher in under 500 characters only \n" + prompt
     })
     headers = {
       'Content-Type': 'application/json'
