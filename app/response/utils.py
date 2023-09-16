@@ -33,7 +33,7 @@ async def ask_gpt(prompt: str):
     }
 
     response = requests.request("POST", GPT_ENDPOINT, headers=headers, data=payload)
-    return response.json()["content"]
+    return response.json()["choices"][0]["message"]["content"]
 
 async def generate_audio(text: str):
     if text:
