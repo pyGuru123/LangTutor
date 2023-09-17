@@ -5,5 +5,5 @@ ELEVENLABS_ENDPOINT = os.getenv(
 )
 
 GPT_ENDPOINT = os.getenv(
-    "GPT_ENDPOINT", "https://movieshub-e2d380615f80.herokuapp.com/api/v1/llmodels/gpt"
+    "GPT_ENDPOINT", "https://tgapi-7d0b0583d985.herokuapp.com/api/v1/llmodels/gpt"
 )
