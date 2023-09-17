@@ -6,6 +6,7 @@ from app.response.utils import (
     edit_bot_message,
     send_bot_audio,
     generate_audio,
+    send_bot_action,
     ask_gpt,
     get_audio,
     speech_to_text
@@ -28,6 +29,7 @@ async def main(request: dict):
 
     if text:
         logger.info(text)
+        await send_bot_action(chat_id)
 
         if text.strip() == "/start":
             audio = await generate_audio("Hello. From now on ill be your english teacher.")

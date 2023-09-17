@@ -2,6 +2,7 @@ import os
 import json
 import platform
 import requests
+import telegram
 import assemblyai as aai
 from telegram import Bot
 from loguru import logger
@@ -33,6 +34,9 @@ async def edit_bot_message(chat_id, reply_id, msg):
 async def send_bot_audio(chat_id, reply_id, audio):
     response = await bot.send_audio(chat_id=chat_id, reply_to_message_id=reply_id, audio=audio)
     return response
+
+async def send_bot_action(chat_id):
+    await bot.send_chat_action(chat_id=chat_id, action=telegram.constants.ChatAction.UPLOAD_AUDIO)
 
 async def get_audio(voice):
     audio = await bot.get_file(voice["file_id"])
