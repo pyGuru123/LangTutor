@@ -36,7 +36,7 @@ async def send_bot_audio(chat_id, reply_id, audio):
     return response
 
 async def send_bot_action(chat_id):
-    await bot.send_chat_action(chat_id=chat_id, action=telegram.constants.ChatAction.UPLOAD_AUDIO)
+    await bot.send_chat_action(chat_id=chat_id, action=telegram.constants.ChatAction.UPLOAD_VOICE)
 
 async def get_audio(voice):
     audio = await bot.get_file(voice["file_id"])
@@ -44,8 +44,10 @@ async def get_audio(voice):
 
 async def ask_gpt(prompt: str):
     payload = json.dumps({
-      "prompt": "reply to this prompt as my english teacher in under 500 characters only \n" + prompt
+      "context": "Act as my english teacher who helps me in learning english. Reply in under 500 words only",
+      "prompt": prompt
     })
+
     headers = {
       'Content-Type': 'application/json'
     }

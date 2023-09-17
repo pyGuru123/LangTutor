@@ -21,11 +21,13 @@ async def main(request: dict):
     chat_id = content["message"]["chat"]["id"]
     reply_id = content["message"]["message_id"]
 
+    await send_bot_action(chat_id)
+
     if "text" in content["message"]:
         text = content["message"]["text"]
     elif "voice" in content["message"]:
-        audio = await get_audio(content["message"]["voice"])
-        text = await speech_to_text(audio.file_path)
+        voice = await get_audio(content["message"]["voice"])
+        text = await speech_to_text(voice.file_path)
 
     if text:
         logger.info(text)
@@ -35,17 +37,13 @@ async def main(request: dict):
             audio = await generate_audio("Hello. From now on ill be your english teacher.")
             await send_bot_audio(chat_id, reply_id, audio)
         else:
-            if audio:
-                message = await send_bot_message(chat_id, reply_id, "Query : " + text)
-
             response = await ask_gpt(text)
             if response:
-                if audio:
-                    await edit_bot_message(chat_id, message.message_id, "Response : " + response)
-
                 try:
-                    reply_audio = await generate_audio(response)
-                    await send_bot_audio(chat_id, reply_id, reply_audio)
+                    audio = await generate_audio(response)
+                    await send_bot_audio(chat_id, reply_id, audio)
                 except Exception as e:
                     logger.error(f"{e=}")
+                    audio = await generate_audio("An error occured, try again")
+                    await send_bot_audio(chat_id, reply_id, audio)
         
