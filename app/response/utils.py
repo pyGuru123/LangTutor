@@ -31,8 +31,9 @@ async def edit_bot_message(chat_id, reply_id, msg):
     response = await bot.edit_message_text(chat_id=chat_id, message_id=reply_id, text=msg)
     return response
 
-async def send_bot_audio(chat_id, reply_id, audio):
-    response = await bot.send_audio(chat_id=chat_id, reply_to_message_id=reply_id, audio=audio)
+async def send_bot_audio(chat_id, reply_id, audio, caption="", title=""):
+    response = await bot.send_audio(chat_id=chat_id, reply_to_message_id=reply_id, audio=audio,
+                    caption=caption, title=title)
     return response
 
 async def send_bot_action(chat_id):
@@ -45,7 +46,7 @@ async def get_audio(voice):
 async def ask_gpt(prompt: str):
     payload = json.dumps({
       "context": "Act as my english teacher who helps me in learning english. Reply in under 500 words only",
-      "prompt": prompt
+      "prompt": "Reply me as my english teacher " + prompt
     })
 
     headers = {

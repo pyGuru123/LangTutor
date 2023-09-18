@@ -34,14 +34,15 @@ async def main(request: dict):
         await send_bot_action(chat_id)
 
         if text.strip() == "/start":
-            audio = await generate_audio("Hello. From now on ill be your english teacher.")
-            await send_bot_audio(chat_id, reply_id, audio)
+            msg = "Hello. From now on ill be your english teacher."
+            audio = await generate_audio(msg)
+            await send_bot_audio(chat_id, reply_id, audio, caption=msg, title="LangTutor Response")
         else:
             response = await ask_gpt(text)
             if response:
                 try:
                     audio = await generate_audio(response)
-                    await send_bot_audio(chat_id, reply_id, audio)
+                    await send_bot_audio(chat_id, reply_id, audio, caption=response, title="LangTutor Response")
                 except Exception as e:
                     logger.error(f"{e=}")
                     audio = await generate_audio("An error occured, try again")
