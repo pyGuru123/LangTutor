@@ -33,7 +33,7 @@ async def edit_bot_message(chat_id, reply_id, msg):
 
 async def send_bot_audio(chat_id, reply_id, audio, caption="", title=""):
     response = await bot.send_audio(chat_id=chat_id, reply_to_message_id=reply_id, audio=audio,
-                    caption=caption[:256], title=title)
+                    caption=caption[:512], title=title, performer="LangTutor")
     return response
 
 async def send_bot_action(chat_id):
@@ -48,7 +48,8 @@ async def ask_gpt(prompt: str):
       "context": "I want you to act as an English teacher and help me learn English. \
                 I will ask you questions and you will provide explanations, examples, and exercises to\
                 improve my English skills",
-      "prompt": "Reply me as my english teacher and try to be as short as possible. Here's my prompt" + prompt
+      "prompt": "Your name is LangTutor and you will Reply me as my english teacher. Try to be as short as possible.\
+                 Here's my prompt" + prompt
     })
 
     headers = {
