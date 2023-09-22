@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from loguru import logger
 
 from app.response.router import router as ResponseRouter
-from app.text2speech.router import router as Text2SpeechRouter
 
 app = FastAPI(title="LangTutorApi")
 
@@ -10,7 +9,6 @@ app = FastAPI(title="LangTutorApi")
 #                                Routers
 
 app.include_router(ResponseRouter, prefix="/api/v1/response", tags=["Bot Response"])
-app.include_router(Text2SpeechRouter, prefix="/api/v1/synthesis", tags=["Speech Synthesis"])
 
 
 # --------------------------------------------------------------------------
