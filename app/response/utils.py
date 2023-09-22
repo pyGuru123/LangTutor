@@ -4,8 +4,8 @@ import platform
 import requests
 import telegram
 import assemblyai as aai
-from telegram import Bot
 from loguru import logger
+from telegram import Bot, ReplyKeyboardMarkup
 from elevenlabs import generate, play, set_api_key
 
 from app.config import GPT_ENDPOINT
@@ -42,6 +42,19 @@ async def send_bot_action(chat_id):
 async def get_audio(voice):
     audio = await bot.get_file(voice["file_id"])
     return audio
+
+async def one_time_keyboard(chat_id):
+    keyboard = [
+        ['English Correction', 'Conversation'],
+        ['Word of the Day', 'Translate']
+    ]
+
+    markup =  ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+    await bot.send_message(
+            chat_id=chat_id,
+            text="I don't understand that command. Please use the Main Menu button.",
+            reply_markup=markup
+        )
 
 async def ask_gpt(prompt: str):
     payload = json.dumps({

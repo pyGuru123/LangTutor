@@ -9,7 +9,8 @@ from app.response.utils import (
     send_bot_action,
     ask_gpt,
     get_audio,
-    speech_to_text
+    speech_to_text,
+    one_time_keyboard
 )
 
 
@@ -21,6 +22,8 @@ async def main(request: dict):
     chat_id = content["message"]["chat"]["id"]
     reply_id = content["message"]["message_id"]
 
+    logger.info(content)
+
     await send_bot_action(chat_id)
 
     if "text" in content["message"]:
@@ -31,6 +34,7 @@ async def main(request: dict):
 
     if text:
         logger.info(text)
+        await one_time_keyboard(chat_id)
         await send_bot_action(chat_id)
 
         if text.strip() == "/start":
@@ -45,6 +49,7 @@ async def main(request: dict):
                     await send_bot_audio(chat_id, reply_id, audio, caption=response, title="LangTutor Response")
                 except Exception as e:
                     logger.error(f"{e=}")
-                    audio = await generate_audio("An error occured, try again")
-                    await send_bot_audio(chat_id, reply_id, audio)
+                    await send_bot_message(chat_id, reply_id, response)
+                    # audio = await generate_audio("An error occured, try again")
+                    # await send_bot_audio(chat_id, reply_id, audio)
         
