@@ -10,13 +10,15 @@ from app.response.utils import (
     ask_gpt,
     get_audio,
     speech_to_text,
-    one_time_keyboard
+    one_time_keyboard,
+    translate_sentence
 )
 
 
 async def main(request: dict):
     audio = None
     text = None
+    response = None
 
     content = request["content"]
     chat_id = content["message"]["chat"]["id"]
@@ -34,22 +36,21 @@ async def main(request: dict):
 
     if text:
         logger.info(text)
-        await one_time_keyboard(chat_id)
         await send_bot_action(chat_id)
 
         if text.strip() == "/start":
-            msg = "Hello. From now on ill be your english teacher."
-            audio = await generate_audio(msg)
-            await send_bot_audio(chat_id, reply_id, audio, caption=msg, title="LangTutor Response")
+            response = "Hello. From now on ill be your english teacher."
+        if text.startswith("/translate"):
+            text = text.remove("/translate")
+            response = translate_sentence(text)
         else:
             response = await ask_gpt(text)
-            if response:
-                try:
-                    audio = await generate_audio(response)
-                    await send_bot_audio(chat_id, reply_id, audio, caption=response, title="LangTutor Response")
-                except Exception as e:
-                    logger.error(f"{e=}")
-                    await send_bot_message(chat_id, reply_id, response)
-                    # audio = await generate_audio("An error occured, try again")
-                    # await send_bot_audio(chat_id, reply_id, audio)
+
+        try:
+            await send_bot_action(chat_id)
+            audio = await generate_audio(response)
+            await send_bot_audio(chat_id, reply_id, audio, caption=response, title="LangTutor Response")
+        except Exception as e:
+            logger.error(f"{e=}")
+            await send_bot_message(chat_id, reply_id, response)
         

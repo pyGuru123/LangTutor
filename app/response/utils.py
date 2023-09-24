@@ -92,3 +92,8 @@ async def speech_to_text(file_url):
     transcriber = aai.Transcriber()
     transcript = transcriber.transcribe(file_url)
     return transcript.text
+
+async def translate_sentence(text: str):
+    url = f"https://api.pawan.krd/gtranslate?from=detect&to=sa&text={text}"
+    response = requests.get(url)
+    return response.json()
