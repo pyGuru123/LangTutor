@@ -11,7 +11,8 @@ from app.response.utils import (
     get_audio,
     speech_to_text,
     one_time_keyboard,
-    translate_sentence
+    translate_sentence,
+    get_word_of_the_day
 )
 
 
@@ -40,9 +41,11 @@ async def main(request: dict):
 
         if text.strip() == "/start":
             response = "Hello. From now on ill be your english teacher."
-        if text.startswith("/translate"):
-            text = text.remove("/translate")
-            response = translate_sentence(text)
+        elif text.startswith("/translate"):
+            text = text.replace("/translate", "")
+            response = await translate_sentence(text)
+        elif text.startswith("/wotd"):
+            response = await get_word_of_the_day()
         else:
             response = await ask_gpt(text)
 

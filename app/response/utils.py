@@ -5,6 +5,8 @@ import requests
 import telegram
 import assemblyai as aai
 from loguru import logger
+from bs4 import BeautifulSoup
+from telegram.constants import ParseMode
 from telegram import Bot, ReplyKeyboardMarkup
 from elevenlabs import generate, play, set_api_key
 
@@ -24,7 +26,8 @@ aai.settings.api_key = ASSEMBLYAI_TOKEN
 bot = Bot(token=BOT_TOKEN)
 
 async def send_bot_message(chat_id, reply_id, msg):
-    response = await bot.send_message(chat_id=chat_id, reply_to_message_id=reply_id, text=msg)
+    response = await bot.send_message(chat_id=chat_id, reply_to_message_id=reply_id, text=msg, 
+                                parse_mode=ParseMode.HTML)
     return response
 
 async def edit_bot_message(chat_id, reply_id, msg):
@@ -33,7 +36,7 @@ async def edit_bot_message(chat_id, reply_id, msg):
 
 async def send_bot_audio(chat_id, reply_id, audio, caption="", title=""):
     response = await bot.send_audio(chat_id=chat_id, reply_to_message_id=reply_id, audio=audio,
-                    caption=caption[:512], title=title, performer="LangTutor")
+                    caption=caption[:512], title=title, performer="LangTutor", parse_mode=ParseMode.HTML)
     return response
 
 async def send_bot_action(chat_id):
@@ -94,6 +97,23 @@ async def speech_to_text(file_url):
     return transcript.text
 
 async def translate_sentence(text: str):
-    url = f"https://api.pawan.krd/gtranslate?from=detect&to=sa&text={text}"
+    url = f"https://api.pawan.krd/gtranslate?from=hi&to=en&text={text}"
     response = requests.get(url)
-    return response.json()
+    return response.json()['translated']
+
+async def get_word_of_the_day():
+    url = "https://www.merriam-webster.com/word-of-the-day"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    word = soup.find("h2", class_="word-header-txt")
+    verb = soup.find("div", class_="word-attributes").text.strip().replace('\n', '|')
+    meaning_container = soup.find("div", class_="wod-definition-container")
+    container_paras = meaning_container.find_all("p")
+
+    result = ""
+    result += f"<b>{word.text.strip()}</b>\n\n"
+    result += f"{verb}\n\n"
+    result += f"{container_paras[0].text}\n\n"
+    result += f"{container_paras[1].text}"
+
+    return result
